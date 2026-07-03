@@ -12,7 +12,7 @@ Aegis is designed around clean architectural separation, with a fully asynchrono
 
 ```mermaid
 graph TD
-    subgraph Client-Side (React & Vite)
+    subgraph "Client-Side (React & Vite)"
         A[MVP Estimator UI] -->|Post Scope Description| B[Live Swarm Progress Monitor]
         B -->|Server-Sent Events| C[Interactive Client Workspace]
         C --> D[Roadmap SVG Timeline]
@@ -20,7 +20,7 @@ graph TD
         C --> F[Generated Tech Spec Blueprint]
     end
 
-    subgraph Server-Side (FastAPI & Python)
+    subgraph "Server-Side (FastAPI & Python)"
         G[FastAPI Server] -->|SSE Stream /api/mvps/stream| B
         G -->|API Endpoints| H[Swarm Orchestration Engine]
         H -->|Spawns Swarm| I[Product Manager Agent]
