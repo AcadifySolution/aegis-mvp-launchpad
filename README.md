@@ -1,150 +1,178 @@
 # Aegis MVP Launchpad 🚀
 
-Aegis MVP Launchpad is an enterprise-grade client portal and AI agent swarm scope estimator built to showcase top-tier engineering quality, visual excellence, and DevOps practices for an elite **MVP Development Service**.
+> A client-facing MVP scoping and estimation workspace powered by a deterministic agent-swarm planning flow.
 
-This repository demonstrates how a modern MVP development agency operates: bridging the gap between client ideas and structured technical delivery. Clients use the portal to define their MVP ideas, run a collaborative agent swarm analysis, map out their visual roadmap, plan budgets, and monitor sprint updates in real-time.
+Aegis turns an initial product description into a structured backlog, technical blueprint, delivery timeline, and budget estimate, while streaming planning progress to the browser.
 
----
-
-## 🏗️ Architectural Overview
-
-Aegis is designed around clean architectural separation, with a fully asynchronous event-driven backend and a highly polished, responsive Single Page Application (SPA) frontend.
+## Architecture
 
 ```mermaid
-graph TD
-    subgraph "Client-Side (React & Vite)"
-        A[MVP Estimator UI] -->|Post Scope Description| B[Live Swarm Progress Monitor]
-        B -->|Server-Sent Events| C[Interactive Client Workspace]
-        C --> D[Roadmap SVG Timeline]
-        C --> E[Sprint Cost & Timeline Planner]
-        C --> F[Generated Tech Spec Blueprint]
-    end
-
-    subgraph "Server-Side (FastAPI & Python)"
-        G[FastAPI Server] -->|SSE Stream /api/mvps/stream| B
-        G -->|API Endpoints| H[Swarm Orchestration Engine]
-        H -->|Spawns Swarm| I[Product Manager Agent]
-        H -->|Spawns Swarm| J[System Architect Agent]
-        H -->|Spawns Swarm| K[Financial Analyst Agent]
-        I & J & K -->|Emit Logs & Updates| L[Thread-safe Mock DB]
-        L --> G
-    end
+flowchart LR
+    UI[React + Vite] --> API[FastAPI]
+    API --> SWARM[Estimator Swarm]
+    SWARM --> PM[Product Manager]
+    SWARM --> ARCH[System Architect]
+    SWARM --> FIN[Financial Analyst]
+    SWARM --> DB[(Mock Persistence)]
+    SWARM --> SSE[SSE Event Stream]
+    SSE --> UI
 ```
 
-### Key Engineering Practices Demonstrated:
-* **Clean Layered Architecture (Python)**: Clear demarcation of API routers, domain logic (agent swarm and estimators), schemas (Pydantic), and database storage.
-* **Server-Sent Events (SSE)**: Asynchronous real-time log and state streaming from backend agents to client dashboard without HTTP polling.
-* **SVG Graph Visualization**: Responsive SVG DAG mapping the MVP workflow phases (Ideation, Design, Development, QA, Launch) with active step indicator glows.
-* **Reactive Calculation State**: Real-time frontend recalculations of team size, delivery date, and sprints as users adjust scope priorities or timeline velocity.
-* **DevOps Excellence**: Dual-service containerization via Docker and Docker Compose, linting standards, and backend unit testing via pytest.
+## Core capabilities
 
----
+| Area | Capability |
+| --- | --- |
+| Scoping | Project intake with bounded description, platforms, and target timeline |
+| Agent planning | Product, architecture, and finance estimation stages |
+| Live updates | Server-Sent Events for progress/log streaming |
+| Planning | User stories, technical endpoints, database schemas |
+| Estimation | Hours, team size, hourly rate, timeline, milestone breakdown |
+| Client workspace | Roadmap, sprint planner, and technical specification views |
+| API | FastAPI + Pydantic validation |
+| Frontend | React 18 + TypeScript + Vite + Tailwind |
+| Delivery | Docker Compose + GitHub Actions |
+| Safety baseline | CORS allowlist, API-key hook, bounded inputs, bounded SSE queues, log caps |
 
-## 🛠️ Tech Stack & Tooling
+## Repository structure
 
-### Backend
-* **Python 3.11+**
-* **FastAPI**: Fast, asynchronous web framework.
-* **Pydantic v2**: High-performance data validation.
-* **Pytest**: Unit testing and assertions.
+```text
+.
+├── backend/
+│   ├── app/
+│   │   ├── api/          # HTTP + SSE routes
+│   │   ├── core/         # swarm/configuration primitives
+│   │   ├── db/           # MVP persistence abstraction
+│   │   └── schemas/      # Pydantic contracts
+│   ├── tests/
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/   # workspace UI
+│   │   └── types/
+│   ├── package.json
+│   └── vite.config.ts
+├── docker-compose.yml
+├── SECURITY.md
+└── CONTRIBUTING.md
+```
 
-### Frontend
-* **React 18** with **TypeScript**
-* **Vite**: Ultra-fast build tool and bundler.
-* **Tailwind CSS**: Contemporary styling system.
-* **Lucide Icons**: Clean, scalable iconography.
+## Quick start
 
-### DevOps
-* **Docker & Docker Compose**
-* **GitHub Actions**: Continuous integration workflow.
+### Docker
 
----
+From the repository root:
 
-## 🚀 Getting Started
-
-### Prerequisites
-Make sure you have [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
-
-### Quick Start with Docker
-1. Clone the repository and navigate to the project root:
-   ```bash
-   cd mvp-development
-   ```
-2. Build and start the services:
-   ```bash
-   docker-compose up --build
-   ```
-3. Open your browser and navigate to:
-   * **Client Dashboard**: [http://localhost:5173](http://localhost:5173)
-   * **API Swagger Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
-
-### Local Development (Without Docker)
-
-#### Running the Backend
-1. Navigate to the `backend/` directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Run the FastAPI development server:
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-
-#### Running the Frontend
-1. Navigate to the `frontend/` directory:
-   ```bash
-   cd ../frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Run the Vite development server:
-   ```bash
-   npm run dev
-   ```
-
----
-
-## 🧪 Testing
-
-We value high test coverage and solid software contract assertions.
-
-### Run Backend Tests
-Navigate to the `backend/` directory and run pytest:
 ```bash
-pytest
+docker compose up --build
 ```
 
----
+Then open:
 
-## 📊 Core Features Showcase
+- Frontend: http://localhost:5173
+- API docs: http://localhost:8000/docs
+- Health: http://localhost:8000/api/health
 
-### 1. The AI Scope Swarm
-A client enters their raw product text. The backend spins up three concurrent virtual agents to collaborate on the specification:
-* **Product Manager**: Synthesizes details into tangible user stories (Backlog items).
-* **System Architect**: Designs database tables, key APIs, tech stack, and structure.
-* **Financial Analyst**: Evaluates development sprint complexity, sizes team, and calculates budget.
+### Local development
 
-### 2. Live Collaboration Monitor
-The client watches the planning session unfold. As agents log thoughts and produce blueprints, Server-Sent Events stream details directly into the UI logs and timeline cards.
+Backend:
 
-### 3. SVG Project Roadmap
-A beautiful visual representation of the stages to MVP launch. Completed stages display with checkmarks, active stages glow with animations, and pending stages stay blurred.
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload --port 8000
+```
 
-### 4. Interactive Sprint Planner
-Clients can drag feature scopes, toggle priority levels, or speed up the delivery timeline with a slider. Costs, sprints, and launch date estimates recalculate instantly in the browser.
+Frontend:
 
----
+```bash
+cd frontend
+npm ci
+npm run dev
+```
 
-## ⚖️ License
-Distributed under the MIT License. See `LICENSE` for details.
+## Configuration
+
+Use the root `.env.example` as the starting point.
+
+Important settings:
+
+```text
+APP_ENV=development
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+AEGIS_API_KEY=
+MAX_DESCRIPTION_LENGTH=20000
+MAX_PROJECT_LOGS=250
+PORT=8000
+```
+
+When `AEGIS_API_KEY` is configured, API routes require the same value in the `X-API-Key` header.
+
+For production, add real authentication/authorization and per-user project access controls. The included API-key hook is intentionally a simple deployment baseline, not a complete identity system.
+
+## API
+
+Main endpoints:
+
+```text
+GET    /api/health
+GET    /api/mvps
+POST   /api/mvps
+GET    /api/mvps/{project_id}
+GET    /api/mvps/{project_id}/stream
+PATCH  /api/mvps/{project_id}/backlog
+```
+
+The estimation flow is asynchronous from the client's perspective: project creation returns a processing record, the swarm updates state in the background, and the browser can consume progress over SSE.
+
+## Quality checks
+
+Backend:
+
+```bash
+cd backend
+ruff check .
+black --check .
+pytest -q
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm ci
+npm run build
+```
+
+GitHub Actions executes backend compilation/lint/tests, frontend build, and a Python dependency audit.
+
+## Product behavior
+
+The current implementation is a **planning/estimation MVP**. The swarm uses deterministic heuristics to generate example backlog, architecture, and financial outputs from the submitted product description. Replace those deterministic stages with real model-backed agents only behind explicit provider, authorization, evaluation, and cost controls.
+
+## Security and production readiness
+
+Read [SECURITY.md](SECURITY.md) before deployment.
+
+This repository is not a certified compliance product. A production tenant-facing deployment should additionally implement:
+
+- authenticated identity and authorization
+- per-user/project data isolation
+- durable database storage
+- rate limiting and abuse protection
+- secrets management
+- audit logging
+- encrypted transport
+- model/provider data-handling controls
+- operational monitoring and backup/recovery
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
