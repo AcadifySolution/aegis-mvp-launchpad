@@ -1,6 +1,7 @@
 import queue
 import threading
 import time
+from app.core.config import MAX_PROJECT_LOGS
 from typing import Dict, List
 
 from app.core.config import MAX_PROJECT_LOGS
