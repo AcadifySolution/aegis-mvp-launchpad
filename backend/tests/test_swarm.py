@@ -1,28 +1,38 @@
 import pytest
 from fastapi.testclient import TestClient
-from app.main import app
+
 from app.db.mock_db import db
-from app.schemas.mvp import MVPEstimateResult, UserStory, FinancialEstimate, BudgetMilestone
+from app.main import app
+from app.schemas.mvp import (
+    BudgetMilestone,
+    FinancialEstimate,
+    MVPEstimateResult,
+    UserStory,
+)
 
 client = TestClient(app)
 
+
 @pytest.fixture(autouse=True)
-def run_around_tests():
+def run_around_tests(monkeypatch):
+    monkeypatch.setattr("app.api.routes.start_estimation_swarm", lambda **kwargs: None)
     # Clear DB before each test
     db.clear()
     yield
+
 
 def test_health_check():
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json() == {"status": "healthy", "service": "aegis-backend"}
 
+
 def test_create_project_estimate_validation():
     # Short description should fail validation (min_length=20)
     invalid_payload = {
         "name": "Quick App",
         "description": "Too short",
-        "target_platforms": ["Web"]
+        "target_platforms": ["Web"],
     }
     response = client.post("/api/mvps", json=invalid_payload)
     assert response.status_code == 422
@@ -32,7 +42,7 @@ def test_create_project_estimate_validation():
         "name": "SaaS Platform",
         "description": "Build an enterprise portal with authentication, dashboards, and role management.",
         "target_platforms": ["Web", "Mobile"],
-        "expected_timeline_weeks": 10
+        "expected_timeline_weeks": 10,
     }
     response = client.post("/api/mvps", json=valid_payload)
     assert response.status_code == 200
@@ -40,6 +50,7 @@ def test_create_project_estimate_validation():
     assert data["name"] == "SaaS Platform"
     assert data["status"] == "processing"
     assert "id" in data
+
 
 def test_database_crud():
     project = MVPEstimateResult(
@@ -51,13 +62,13 @@ def test_database_crud():
         tech_spec=None,
         financials=None,
         logs=[],
-        created_at=1234567.0
+        created_at=1234567.0,
     )
     db.create_project(project)
-    
+
     assert db.get_project("test-id") is not None
     assert len(db.list_projects()) == 1
-    
+
     project.name = "Updated Mock Project"
     db.update_project(project)
     assert db.get_project("test-id").name == "Updated Mock Project"
@@ -65,11 +76,24 @@ def test_database_crud():
     db.delete_project("test-id")
     assert db.get_project("test-id") is None
 
+
 def test_backlog_recalculation():
     # Setup completed project in DB
     stories = [
-        UserStory(id="story-1", title="Feature A", description="Desc A", priority="Must-Have", estimated_hours=10),
-        UserStory(id="story-2", title="Feature B", description="Desc B", priority="Should-Have", estimated_hours=20)
+        UserStory(
+            id="story-1",
+            title="Feature A",
+            description="Desc A",
+            priority="Must-Have",
+            estimated_hours=10,
+        ),
+        UserStory(
+            id="story-2",
+            title="Feature B",
+            description="Desc B",
+            priority="Should-Have",
+            estimated_hours=20,
+        ),
     ]
     financials = FinancialEstimate(
         total_hours=30,
@@ -78,8 +102,10 @@ def test_backlog_recalculation():
         timeline_weeks=4,
         team_size=1,
         milestones=[
-            BudgetMilestone(name="Milestone 1", percentage=100, amount=1500.0, completed=False)
-        ]
+            BudgetMilestone(
+                name="Milestone 1", percentage=100, amount=1500.0, completed=False
+            )
+        ],
     )
     project = MVPEstimateResult(
         id="test-recalc",
@@ -90,20 +116,20 @@ def test_backlog_recalculation():
         tech_spec=None,
         financials=financials,
         logs=[],
-        created_at=123456.0
+        created_at=123456.0,
     )
     db.create_project(project)
 
     # Perform PATCH request updating rate and sorting (e.g. swap priority)
     update_payload = {
         "story_ids_priority": ["story-2", "story-1"],
-        "hourly_rate": 100.0, # Double the rate
-        "team_size": 2 # Double team size should reduce timeline
+        "hourly_rate": 100.0,  # Double the rate
+        "team_size": 2,  # Double team size should reduce timeline
     }
-    
+
     response = client.patch("/api/mvps/test-recalc/backlog", json=update_payload)
     assert response.status_code == 200
-    
+
     data = response.json()
     # Cost should double (30 hours * $100 = $3000)
     assert data["financials"]["total_cost"] == 3000.0

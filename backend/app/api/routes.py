@@ -3,20 +3,19 @@ import queue
 import time
 import uuid
 
-from fastapi import APIRouter, BackgroundTasks, Header, HTTPException, Query
+from fastapi import APIRouter, Header, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
+from app.core.agent_swarm import event_manager, start_estimation_swarm
 from app.core.config import API_KEY
 from app.db.mock_db import db
-from app.core.config import MAX_PROJECT_LOGS
 from app.schemas.mvp import (
     BacklogUpdateRequest,
-    FinancialEstimate,
     BudgetMilestone,
+    FinancialEstimate,
     MVPEstimateRequest,
     MVPEstimateResult,
 )
-from app.core.agent_swarm import event_manager, start_estimation_swarm
 
 router = APIRouter(prefix="/api/mvps")
 
@@ -107,7 +106,10 @@ def stream_project_swarm(
                 except queue.Empty:
                     yield ": keepalive\n\n"
                     current_project = db.get_project(project_id)
-                    if current_project and current_project.status in {"completed", "failed"}:
+                    if current_project and current_project.status in {
+                        "completed",
+                        "failed",
+                    }:
                         break
         finally:
             event_manager.unsubscribe(project_id, q)

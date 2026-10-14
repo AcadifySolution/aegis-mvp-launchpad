@@ -1,6 +1,5 @@
 import os
 
-
 APP_ENV = os.getenv("APP_ENV", "development").lower()
 CORS_ALLOWED_ORIGINS = [
     origin.strip()

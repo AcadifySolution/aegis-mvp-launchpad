@@ -1,18 +1,17 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
 
 from app.core.config import MAX_DESCRIPTION_LENGTH
 
 
 class MVPEstimateRequest(BaseModel):
-    name: Optional[str] = Field(default="My MVP Project", max_length=200)
+    name: str | None = Field(default="My MVP Project", max_length=200)
     description: str = Field(
         ...,
         min_length=20,
         max_length=MAX_DESCRIPTION_LENGTH,
         description="Detailed description of the MVP idea and features",
     )
-    target_platforms: List[str] = Field(
+    target_platforms: list[str] = Field(
         default_factory=lambda: ["Web"],
         min_length=1,
         max_length=8,
@@ -47,17 +46,17 @@ class APIEndpoint(BaseModel):
 
 class DBSchema(BaseModel):
     table_name: str
-    columns: List[str]
+    columns: list[str]
 
 
 class TechSpec(BaseModel):
-    languages: List[str]
-    frontend: List[str]
-    backend: List[str]
+    languages: list[str]
+    frontend: list[str]
+    backend: list[str]
     database: str
     hosting: str
-    endpoints: List[APIEndpoint]
-    schemas: List[DBSchema]
+    endpoints: list[APIEndpoint]
+    schemas: list[DBSchema]
 
 
 class BudgetMilestone(BaseModel):
@@ -73,7 +72,7 @@ class FinancialEstimate(BaseModel):
     total_cost: float = Field(..., ge=0)
     timeline_weeks: int = Field(..., ge=1, le=104)
     team_size: int = Field(..., ge=1, le=100)
-    milestones: List[BudgetMilestone]
+    milestones: list[BudgetMilestone]
 
 
 class MVPEstimateResult(BaseModel):
@@ -81,14 +80,14 @@ class MVPEstimateResult(BaseModel):
     name: str
     description: str
     status: str = Field("processing")
-    user_stories: List[UserStory] = Field(default_factory=list)
-    tech_spec: Optional[TechSpec] = None
-    financials: Optional[FinancialEstimate] = None
-    logs: List[SwarmLog] = Field(default_factory=list)
+    user_stories: list[UserStory] = Field(default_factory=list)
+    tech_spec: TechSpec | None = None
+    financials: FinancialEstimate | None = None
+    logs: list[SwarmLog] = Field(default_factory=list)
     created_at: float
 
 
 class BacklogUpdateRequest(BaseModel):
-    story_ids_priority: List[str] = Field(..., min_length=1, max_length=500)
-    hourly_rate: Optional[float] = Field(default=None, gt=0, le=100_000)
-    team_size: Optional[int] = Field(default=None, ge=1, le=100)
+    story_ids_priority: list[str] = Field(..., min_length=1, max_length=500)
+    hourly_rate: float | None = Field(default=None, gt=0, le=100_000)
+    team_size: int | None = Field(default=None, ge=1, le=100)
