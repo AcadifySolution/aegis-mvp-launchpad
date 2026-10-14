@@ -1,4 +1,6 @@
 import pytest
+from fastapi.testclient import TestClient
+
 from app.db.mock_db import db
 from app.main import app
 from app.schemas.mvp import (
@@ -7,7 +9,6 @@ from app.schemas.mvp import (
     MVPEstimateResult,
     UserStory,
 )
-from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
