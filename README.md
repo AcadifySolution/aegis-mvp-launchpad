@@ -1,8 +1,17 @@
-# Aegis MVP Launchpad 🚀
+# Aegis MVP Launchpad — React and FastAPI Project Planning Demo
 
 > A client-facing MVP scoping and estimation workspace powered by a deterministic agent-swarm planning flow.
 
 Aegis turns an initial product description into a structured backlog, technical blueprint, delivery timeline, and budget estimate, while streaming planning progress to the browser.
+
+## Choose a starting point
+
+Use this demo to explore product intake, deterministic backlog generation,
+budget estimates, and streamed progress in a React dashboard. Generated plans
+are illustrative estimates that require review against real scope and delivery capacity.
+
+Inspect the [backend](backend/) and [frontend](frontend/) before adapting the
+workflow. For the underlying orchestration patterns, explore [Autonomous Agent Swarm](https://github.com/AcadifySolution/autonomous-agent-swarm).
 
 ## Architecture
 
@@ -20,18 +29,18 @@ flowchart LR
 
 ## Core capabilities
 
-| Area | Capability |
-| --- | --- |
-| Scoping | Project intake with bounded description, platforms, and target timeline |
-| Agent planning | Product, architecture, and finance estimation stages |
-| Live updates | Server-Sent Events for progress/log streaming |
-| Planning | User stories, technical endpoints, database schemas |
-| Estimation | Hours, team size, hourly rate, timeline, milestone breakdown |
-| Client workspace | Roadmap, sprint planner, and technical specification views |
-| API | FastAPI + Pydantic validation |
-| Frontend | React 18 + TypeScript + Vite + Tailwind |
-| Delivery | Docker Compose + GitHub Actions |
-| Safety baseline | CORS allowlist, API-key hook, bounded inputs, bounded SSE queues, log caps |
+| Area             | Capability                                                                 |
+| ---------------- | -------------------------------------------------------------------------- |
+| Scoping          | Project intake with bounded description, platforms, and target timeline    |
+| Agent planning   | Product, architecture, and finance estimation stages                       |
+| Live updates     | Server-Sent Events for progress/log streaming                              |
+| Planning         | User stories, technical endpoints, database schemas                        |
+| Estimation       | Hours, team size, hourly rate, timeline, milestone breakdown               |
+| Client workspace | Roadmap, sprint planner, and technical specification views                 |
+| API              | FastAPI + Pydantic validation                                              |
+| Frontend         | React 18 + TypeScript + Vite + Tailwind                                    |
+| Delivery         | Docker Compose + GitHub Actions                                            |
+| Safety baseline  | CORS allowlist, API-key hook, bounded inputs, bounded SSE queues, log caps |
 
 ## Repository structure
 
@@ -69,9 +78,9 @@ docker compose up --build
 
 Then open:
 
-- Frontend: http://localhost:5173
-- API docs: http://localhost:8000/docs
-- Health: http://localhost:8000/api/health
+- Frontend: <http://localhost:5173>
+- API docs: <http://localhost:8000/docs>
+- Health: <http://localhost:8000/api/health>
 
 ### Local development
 
